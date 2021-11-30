@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0" DefaultTargets="build">
+
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Decisions.USPS.Steps</RootNamespace>
+    <AssemblyName>Decisions.USPS.Steps</AssemblyName>
+    <OutputPath>bin\Debug</OutputPath>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+
+    <BuildDest>../../../output/binservices</BuildDest>
+    <LibPath>..\..\..\lib</LibPath>
+  </PropertyGroup>
+
+  <Target Name="BeforeBuild">
+    <RemoveDir Directories="./obj/" ContinueOnError="true"/>
+    <Delete Files="${BuildDest}/${AssemblyName}.dll" ContinueOnError="true"/>
+    <MakeDir Directories="${BuildDest}"/>
+  </Target>
+
+	<Import Project="$(LibPath)\msbuild\decisions.net.targets" />
+
+ <ItemGroup>
+    		<EmbeddedResource Include="**\*.vm" />    
+	</ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="..\..\..\output\bincore\DecisionsFramework.dll"/>
+    <Reference Include="..\..\..\output\binhosts\DecisionsWCFServices.dll"/>
+	 <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
+    <Reference Include="System.ServiceModel">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Compile Include="**/*.cs"/>
+  </ItemGroup>
+
+
+  <Target Name="AfterBuild">
+     <Copy SourceFiles="$(OutputPath)/$(AssemblyName).dll"    DestinationFolder="$(BuildDest)" />
+    <Copy SourceFiles="$(OutputPath)/$(AssemblyName).pdb"    DestinationFolder="$(BuildDest)" />
+  </Target>
+
+</Project>
+
+
+
+
+
+
+
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0" DefaultTargets="build_all">
+
+	<PropertyGroup>
+		<OutputType>Library</OutputType>
+		<RootNamespaces>Decisions.USPS.Steps</RootNamespaces>
+		<AssemblyName>Decisions.USPS.Steps</AssemblyName>
+		<CreateModule>..\..\..\output\binutils\CreateModule.exe</CreateModule>
+		<TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+		<OutputPath>..\..\..\modules\Decisions.USPS\Decisions.USPS\bin\Debug</OutputPath>
+		<Configuration>Debug</Configuration>
+		<BuildDest>..\..\..\output\binservices</BuildDest>
+		<LibPath>..\..\..\lib</LibPath>
+		<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+	</PropertyGroup>
+	
+	<Target Name="build_all">
+		<CallTarget Targets="clean"/>
+		<CallTarget Targets="Build"/>
+	</Target>
+	
+	<Target Name="clean">
+		<RemoveDir Directories=".\obj\" ContinueOnError="true"/>
+	</Target>
+	
+	<ItemGroup>
+		<Compile Include="**\*.cs" Exclude="obj\**.*"/>
+	</ItemGroup>
+	
+	<ItemGroup>
+		<Reference Include="..\..\..\lib\decisions\DecisionsFramework.dll" />
+	</ItemGroup>
+	
+	<Import Project="$(LibPath)\msbuild\decisions.net.Targets" />
+	
+	
+	<Target Name="AfterBuild">
+		<Copy SourceFiles="$(OutputPath)\$(AssemblyName).dll" DestinationFolder="$(BuildDest)" />
+	</Target> 
+	
+</Project>

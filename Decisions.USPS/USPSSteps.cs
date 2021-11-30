@@ -27,7 +27,7 @@ namespace Decisions.USPS
 
             return response;
         }
-        
+
         public static string[] GetCitiesByZips(string[] zip5Codes)
         {
             var response = USPS.GetCitiesByZips(zip5Codes);

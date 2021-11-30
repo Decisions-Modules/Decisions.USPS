@@ -1,20 +1,39 @@
 <?xml version="1.0"?>
 <CreateModuleInfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Clients>
+    <DotNetCoreDll>.\packages\DecisionsSDK.6.8.0\lib\CoreServicesClients.Net.dll</DotNetCoreDll>
+    <DotNetFrontendFrameworkDll>.\packages\DecisionsSDK.6.8.0\lib\DecisionsFramework.Net.dll</DotNetFrontendFrameworkDll>
+    <SLCoreDll></SLCoreDll>
+    <SLFrontendFrameworkDll></SLFrontendFrameworkDll>
+    <SilverLightsSDKAssembliesPath></SilverLightsSDKAssembliesPath>
+    <References/>
+  </Clients>
   <Resources NoComponents="true">
-    <CoreServicesDlls>
-      <string>.\Decisions.USPS\obj\Debug\net5.0\win-x64\Decisions.USPS.dll</string>
-    </CoreServicesDlls>
+    <ServicesDlls>
+      <string>.\Decisions.USPS\bin\Debug\Decisions.USPS.dll</string>
+    </ServicesDlls>
     <CliDlls/>
     <WebPages/>
-	<SilverlightDlls/>
-    <AgentDlls/>
-    <InstallScript/>
-    <SqlScripts/>
-    <ObjectsToImport/>
-    <MsSqlScript/>
+	<MvcViews>
+	</MvcViews>
+	<MvcDlls>
+	</MvcDlls>
+    <AgentDlls>
+    </AgentDlls>
+    <InstallScript>
+    </InstallScript>
+    <SqlScripts />
+    <ObjectsToImport></ObjectsToImport>
+    <MsSqlScript>
+    </MsSqlScript>
+    <MySqlScript>
+    </MySqlScript>
+    <OracleScript>
+    </OracleScript>
   </Resources>
-  <Version/>
   <ImagePath>./image.png</ImagePath>
   <Description>Decisions.USPS has steps to work with USPS API.  For more information on USPS visit https://www.usps.com
-Document on USPS: https://www.usps.com/business/web-tools-apis/general-api-developer-guide.pdf</Description>
+
+    Document on USPS: https://www.usps.com/business/web-tools-apis/general-api-developer-guide.pdf
+</Description>
 </CreateModuleInfo>
