@@ -18,6 +18,6 @@
     <BuildDest>$(RootPath)obj</BuildDest>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="DecisionsSDK" Version="7.10.1" />
+    <PackageReference Include="DecisionsSDK" Version="8.0.0-beta" />
   </ItemGroup>
 </Project>
