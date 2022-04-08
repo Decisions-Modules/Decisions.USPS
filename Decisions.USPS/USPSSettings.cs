@@ -1,6 +1,5 @@
-﻿using DecisionsFramework;
+﻿using System.ComponentModel;
 using DecisionsFramework.Data.ORMapper;
-using DecisionsFramework.Design.ConfigurationStorage.Attributes;
 using DecisionsFramework.Design.Properties;
 using DecisionsFramework.ServiceLayer;
 using DecisionsFramework.ServiceLayer.Actions;
@@ -9,64 +8,36 @@ using DecisionsFramework.ServiceLayer.Services.Accounts;
 using DecisionsFramework.ServiceLayer.Services.Administration;
 using DecisionsFramework.ServiceLayer.Services.Folder;
 using DecisionsFramework.ServiceLayer.Utilities;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Runtime.Serialization;
+using DecisionsFramework.Design.ConfigurationStorage.Attributes;
 
 namespace Decisions.USPS
 {
-    [Writable]
-    [ORMEntity]
-    [Exportable]
-    [DataContract]
-    public class USPSSettings : AbstractModuleSettings, INotifyPropertyChanged, IValidationSource
+    public class USPSSettings : AbstractModuleSettings, IInitializable, INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public USPSSettings()
         {
-            this.EntityName = "USPS Settings";
+            EntityName = "USPS Settings";
         }
 
         [ORMField]
         [WritableValue]
         private string userId;
-
+        
         [DataMember]
+        [RequiredProperty("The USPS Module Requires setting a User ID.")]
         [PropertyClassification(new string[] { "USPS Integration" }, "UserId", 1)]
         public string UserId
         {
-            get { return userId; }
+            get => userId;
             set
             {
                 userId = value;
                 OnPropertyChanged(nameof(UserId));
             }
         }
-
-        public static USPSSettings GetSettings()
-        {
-            return ModuleSettingsAccessor<USPSSettings>.GetSettings();
-        }
-
-        #region INotifyPropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public ValidationIssue[] GetValidationIssues()
-        {
-            List<ValidationIssue> issues = new List<ValidationIssue>();
-            if (string.IsNullOrWhiteSpace(UserId))
-                issues.Add(new ValidationIssue(this, "User id is not defined", "Define user id", BreakLevel.Fatal, nameof(UserId)));
-
-            return issues.ToArray();
-        }
-
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            if (string.IsNullOrEmpty(propertyName))
-                return;
-            if (this.PropertyChanged != null)
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-        }
-        #endregion
 
         public override BaseActionType[] GetActions(AbstractUserContext userContext, EntityActionType[] types)
         {
@@ -92,6 +63,17 @@ namespace Decisions.USPS
                     };
             }
             else return new BaseActionType[0];
+        }
+
+        public void Initialize()
+        {
+            // this will create it
+            ModuleSettingsAccessor<USPSSettings>.GetSettings();
+        }
+        
+        private void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

@@ -1,20 +1,22 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Web;
 using System.Xml.Serialization;
+using DecisionsFramework;
+using DecisionsFramework.ServiceLayer;
 
 namespace Decisions.USPS
 {
     public static class USPS
     {
-        private static readonly HttpClient client = new HttpClient();
-        private static string userId => USPSSettings.GetSettings().UserId;
+        private static readonly HttpClient Client = new HttpClient();
 
         public static string Fetch(string api, string xmlQuery)
         {
             string urlEncodedQuery = HttpUtility.UrlEncode(xmlQuery);
-            var responseString = client.GetStringAsync($@"https://production.shippingapis.com/ShippingAPI.dll?API={api}&XML={urlEncodedQuery}").Result;
+            var responseString = Client.GetStringAsync($@"https://production.shippingapis.com/ShippingAPI.dll?API={api}&XML={urlEncodedQuery}").Result;
 
             return responseString;
         }
@@ -29,15 +31,26 @@ namespace Decisions.USPS
                                                                     <Zip5>{code}</Zip5>
                                                                 </ZipCode>").ToList();
 
+            string userId = ModuleSettingsAccessor<USPSSettings>.GetSettings().UserId;
+            
             var xmlRequest = $@"<CityStateLookupRequest USERID=""{userId}"">
                                             {string.Concat(zipCodesQuery)}
                                           </CityStateLookupRequest>";
 
             var responseString = Fetch("CityStateLookup", xmlRequest);
 
-            var response = Deserialize<CityStateLookupResponse>(responseString);
-
-            return response;
+            try
+            {
+                var response = Deserialize<CityStateLookupResponse>(responseString);
+                return response;  
+            }
+            catch (Exception ex)
+            {
+                throw new BusinessRuleException(
+                    "There was an issue performing the request to the USPS web service. " +
+                    "Please ensure that you have set the User ID in Administration -> Settings - USPS Settings. " +
+                    $" {responseString}", ex);
+            }
         }
 
 
@@ -51,6 +64,7 @@ namespace Decisions.USPS
 
         public static ZipCodeLookupRequest GetZipByCity(string address1, string address2, string city, string state)
         {
+            string userId = ModuleSettingsAccessor<USPSSettings>.GetSettings().UserId;
             var responseString = Fetch("ZipCodeLookup", $@"<ZipCodeLookupRequest USERID=""{userId}"">
                                                 <Address ID = ""0"" >
                                                     <Address1>{address1}</Address1>
@@ -60,13 +74,23 @@ namespace Decisions.USPS
                                                 </Address>
                                             </ZipCodeLookupRequest>");
 
-            var address = Deserialize<ZipCodeLookupRequest>(responseString);
-
-            return address;
+            try
+            {
+                var address = Deserialize<ZipCodeLookupRequest>(responseString);
+                return address;
+            }
+            catch (Exception ex)
+            {
+                throw new BusinessRuleException(
+                    "There was an issue performing the request to the USPS web service. " +
+                    "Please ensure that you have set the User ID in Administration -> Settings - USPS Settings. " +
+                    $" {responseString}", ex);
+            }
         }
 
         public static AddressValidateResponse NormalizeAddress(string address1, string address2, string city, string state)
         {
+            string userId = ModuleSettingsAccessor<USPSSettings>.GetSettings().UserId;
             var responseString = Fetch("Verify", $@"<AddressValidateRequest USERID=""{userId}"">
                                                 <Address ID=""0"">
                                                     <Address1>{address1}</Address1>
@@ -77,10 +101,18 @@ namespace Decisions.USPS
                                                     <Zip4></Zip4>
                                                 </Address>
                                             </AddressValidateRequest>");
-
-            var address = Deserialize<AddressValidateResponse>(responseString);
-
-            return address;
+            try
+            {
+                var address = Deserialize<AddressValidateResponse>(responseString);
+                return address;
+            }
+            catch (Exception ex)
+            {
+                throw new BusinessRuleException(
+                    "There was an issue performing the request to the USPS web service. " +
+                    "Please ensure that you have set the User ID in Administration -> Settings - USPS Settings. " +
+                    $" {responseString}", ex);
+            }
         }
 
         private static T Deserialize<T>(string strObj) where T : class
@@ -88,8 +120,17 @@ namespace Decisions.USPS
             XmlSerializer serializer = new XmlSerializer(typeof(T));
             using (TextReader reader = new StringReader(strObj))
             {
-                var response = serializer.Deserialize(reader) as T;
-                return response;
+                try
+                {
+                    var response = serializer.Deserialize(reader) as T;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    throw new BusinessRuleException(
+                        "There was an issue performing the request to the USPS web service. " +
+                        "Please ensure that you have set the User ID in Administration -> Settings - USPS Settings", ex);
+                }
             }
         }
     }
