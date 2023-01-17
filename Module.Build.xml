@@ -2,7 +2,7 @@
 <CreateModuleInfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Resources NoComponents="true">
     <CoreServicesDlls>
-      <string>.\Decisions.USPS\obj\Debug\net6.0\win-x64\Decisions.USPS.dll</string>
+      <string>.\Decisions.USPS\obj\Decisions.USPS.dll</string>
     </CoreServicesDlls>
     <CliDlls/>
     <WebPages/>
@@ -13,7 +13,7 @@
     <ObjectsToImport/>
     <MsSqlScript/>
   </Resources>
-  <Version>8.1.0</Version>
+  <Version>8.9.0</Version>
   <ImagePath>./image.png</ImagePath>
   <Description>Decisions.USPS has steps to work with USPS API.  For more information on USPS visit https://www.usps.com
 Document on USPS: https://www.usps.com/business/web-tools-apis/general-api-developer-guide.pdf</Description>
