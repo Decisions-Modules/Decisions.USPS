@@ -2,6 +2,7 @@
 <Project
     xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0" DefaultTargets="build_all">
     
+
 	<Target Name="build_all">
         <Exec Command="dotnet publish .\Decisions.USPS\Decisions.USPS.csproj --runtime win-x64 --self-contained false --output .\Decisions.USPS\obj -c Debug" />
 		<Exec Command="dotnet tool update --global CreateDecisionsModule-GlobalTool" />
@@ -9,7 +10,7 @@
     </Target>
     
 	<Target Name="build_module">
-        <Exec Command="CreateDecisionsModule -buildmodule Decisions.USPS -output &quot;.&quot; -buildfile Module.Build.xml"/>
+        <Exec Command="D:\DecisionsBranches\7.x\output\binutils\CreateModule.exe -buildmodule Decisions.USPS -output &quot;.&quot; -buildfile Module.Build.json"/>
     </Target>
 
 </Project>
