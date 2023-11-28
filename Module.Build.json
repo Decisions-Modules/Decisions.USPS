@@ -13,7 +13,7 @@
       "ObjectsToImport": null,
       "MsSqlScript": null
     },
-    "Version": "8.15.0",
+    "Version": "9.0.0",
     "ImagePath": "./image.png",
     "Description": "Decisions.USPS has steps to work with USPS API.  For more information on USPS visit https://www.usps.com\nDocument on USPS: https://www.usps.com/business/web-tools-apis/general-api-developer-guide.pdf"
   }
