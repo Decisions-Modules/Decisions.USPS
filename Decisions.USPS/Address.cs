@@ -1,4 +1,4 @@
-﻿namespace Decisions.USPS; // Backwards compatible namespace
+﻿namespace Decisions.USPS;
 
 public class Address
 {

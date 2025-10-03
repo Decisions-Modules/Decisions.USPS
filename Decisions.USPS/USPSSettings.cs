@@ -1,6 +1,9 @@
 ﻿using System.ComponentModel;
+using System.Runtime.Serialization;
 using DecisionsFramework.Data.ORMapper;
+using DecisionsFramework.Design.ConfigurationStorage.Attributes;
 using DecisionsFramework.Design.Properties;
+using DecisionsFramework.Design.Properties.Attributes;
 using DecisionsFramework.ServiceLayer;
 using DecisionsFramework.ServiceLayer.Actions;
 using DecisionsFramework.ServiceLayer.Actions.Common;
@@ -8,9 +11,6 @@ using DecisionsFramework.ServiceLayer.Services.Accounts;
 using DecisionsFramework.ServiceLayer.Services.Administration;
 using DecisionsFramework.ServiceLayer.Services.Folder;
 using DecisionsFramework.ServiceLayer.Utilities;
-using System.Runtime.Serialization;
-using DecisionsFramework.Design.ConfigurationStorage.Attributes;
-using DecisionsFramework.Design.Properties.Attributes;
 
 namespace Decisions.USPS;
 
