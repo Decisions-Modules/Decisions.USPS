@@ -10,25 +10,40 @@ using DecisionsFramework.ServiceLayer.Services.Folder;
 using DecisionsFramework.ServiceLayer.Utilities;
 using System.Runtime.Serialization;
 using DecisionsFramework.Design.ConfigurationStorage.Attributes;
+using DecisionsFramework.Design.Properties.Attributes;
 
 namespace Decisions.USPS;
 
+[CategoryClassification(0, CATEGORY_AUTH)]
+[CategoryClassification(1, CATEGORY_AUTH_DEPRECATED)]
 public class USPSSettings : AbstractModuleSettings, IInitializable, INotifyPropertyChanged
 {
-    public event PropertyChangedEventHandler PropertyChanged;
+    private const string CATEGORY_AUTH = "Authentication";
+    private const string CATEGORY_AUTH_DEPRECATED = "Authentication (Deprecated)";
 
     public USPSSettings()
     {
         EntityName = "USPS Settings";
     }
 
-    [ORMField]
-    [WritableValue]
-    private string userId;
+    [ORMField, WritableValue] private string userId;
+    [ORMField, WritableValue] private string oAuthTokenId;
+
+    [PropertyClassification(1, "OAuth Token", CATEGORY_AUTH)]
+    [TokenPicker]
+    public string OAuthToken
+    {
+        get => oAuthTokenId;
+        set
+        {
+            oAuthTokenId = value;
+            OnPropertyChanged(nameof(OAuthToken));
+        }
+    }
     
     [DataMember]
     [RequiredProperty("The USPS Module Requires setting a User ID.")]
-    [PropertyClassification([ "USPS Integration" ], "UserId", 1)]
+    [PropertyClassification(2, "UserId", CATEGORY_AUTH_DEPRECATED)]
     public string UserId
     {
         get => userId;
@@ -68,8 +83,11 @@ public class USPSSettings : AbstractModuleSettings, IInitializable, INotifyPrope
         ModuleSettingsAccessor<USPSSettings>.GetSettings();
     }
     
+    #region OnPropertyChanged
+    public event PropertyChangedEventHandler PropertyChanged;
     private void OnPropertyChanged(string propertyName)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
+    #endregion
 }
