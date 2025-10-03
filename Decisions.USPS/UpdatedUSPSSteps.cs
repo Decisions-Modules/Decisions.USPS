@@ -13,6 +13,7 @@ public static class UpdatedUspsSteps
     public static string GetCityByZipcode([TokenPicker] OAuthToken token, string zip5)
     {
         HttpClient httpClient = HttpClients.GetHttpClient(HttpClientAuthType.Normal);
+        httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.TokenData);
         AddressesClient client = new AddressesClient(httpClient);
         CityAndState zipResponse = client.GetCityState(zip5);
         return $"{zipResponse?.City}, {zipResponse?.State}";
@@ -21,6 +22,7 @@ public static class UpdatedUspsSteps
     public static Address GetZipcode([TokenPicker] OAuthToken token, string firm, string address1, string address2, string city, string state, string zip5, string zip4)
     {
         HttpClient httpClient = HttpClients.GetHttpClient(HttpClientAuthType.Normal);
+        httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.TokenData);
         AddressesClient client = new AddressesClient(httpClient);
         ZIPCodeResponse zipResponse = client.GetZIPCode(firm, address1, address2, city, state, zip5, zip4);
         return new Address()
@@ -37,6 +39,7 @@ public static class UpdatedUspsSteps
     public static Address GetAddress([TokenPicker] OAuthToken token, string firm, string address1, string address2, string city, string state, string urbanization, string zip5, string zip4)
     {
         HttpClient httpClient = HttpClients.GetHttpClient(HttpClientAuthType.Normal);
+        httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.TokenData);
         AddressesClient client = new AddressesClient(httpClient);
         AddressResponse addressResponse = client.GetAddress(firm, address1, address2, city, state, urbanization, zip5, zip4);
         return new Address()
