@@ -14,8 +14,6 @@ using DecisionsFramework.ServiceLayer.Utilities;
 
 namespace Decisions.USPS;
 
-[CategoryClassification(0, CATEGORY_AUTH)]
-[CategoryClassification(1, CATEGORY_AUTH_DEPRECATED)]
 public class USPSSettings : AbstractModuleSettings, IInitializable, INotifyPropertyChanged
 {
     private const string CATEGORY_AUTH = "Authentication";
@@ -27,23 +25,11 @@ public class USPSSettings : AbstractModuleSettings, IInitializable, INotifyPrope
     }
 
     [ORMField, WritableValue] private string userId;
-    [ORMField, WritableValue] private string oAuthTokenId;
 
-    [PropertyClassification(1, "OAuth Token", CATEGORY_AUTH)]
-    [TokenPicker]
-    public string OAuthToken
-    {
-        get => oAuthTokenId;
-        set
-        {
-            oAuthTokenId = value;
-            OnPropertyChanged(nameof(OAuthToken));
-        }
-    }
     
     [DataMember]
     [RequiredProperty("The USPS Module Requires setting a User ID.")]
-    [PropertyClassification(2, "UserId", CATEGORY_AUTH_DEPRECATED)]
+    [PropertyClassification(1, "UserId", CATEGORY_AUTH)]
     public string UserId
     {
         get => userId;
