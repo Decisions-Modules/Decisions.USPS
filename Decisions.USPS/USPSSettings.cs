@@ -29,7 +29,7 @@ public class USPSSettings : AbstractModuleSettings, IInitializable, INotifyPrope
     
     [DataMember]
     [RequiredProperty("The USPS Module Requires setting a User ID.")]
-    [PropertyClassification(1, "UserId", CATEGORY_AUTH)]
+    [PropertyClassification(1, "UserId", CATEGORY_AUTH_DEPRECATED)]
     public string UserId
     {
         get => userId;
