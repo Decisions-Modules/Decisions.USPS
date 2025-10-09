@@ -1,6 +1,9 @@
 ﻿using System.ComponentModel;
+using System.Runtime.Serialization;
 using DecisionsFramework.Data.ORMapper;
+using DecisionsFramework.Design.ConfigurationStorage.Attributes;
 using DecisionsFramework.Design.Properties;
+using DecisionsFramework.Design.Properties.Attributes;
 using DecisionsFramework.ServiceLayer;
 using DecisionsFramework.ServiceLayer.Actions;
 using DecisionsFramework.ServiceLayer.Actions.Common;
@@ -8,72 +11,69 @@ using DecisionsFramework.ServiceLayer.Services.Accounts;
 using DecisionsFramework.ServiceLayer.Services.Administration;
 using DecisionsFramework.ServiceLayer.Services.Folder;
 using DecisionsFramework.ServiceLayer.Utilities;
-using System.Runtime.Serialization;
-using DecisionsFramework.Design.ConfigurationStorage.Attributes;
 
-namespace Decisions.USPS
+namespace Decisions.USPS;
+
+public class USPSSettings : AbstractModuleSettings, IInitializable, INotifyPropertyChanged
 {
-    public class USPSSettings : AbstractModuleSettings, IInitializable, INotifyPropertyChanged
+    private const string CATEGORY_AUTH = "Authentication";
+    private const string CATEGORY_AUTH_DEPRECATED = "Authentication (Deprecated)";
+
+    public USPSSettings()
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        EntityName = "USPS Settings";
+    }
 
-        public USPSSettings()
+    [ORMField, WritableValue] private string userId;
+
+    
+    [DataMember]
+    [RequiredProperty("The USPS Module Requires setting a User ID.")]
+    [PropertyClassification(1, "UserId", CATEGORY_AUTH_DEPRECATED)]
+    public string UserId
+    {
+        get => userId;
+        set
         {
-            EntityName = "USPS Settings";
-        }
-
-        [ORMField]
-        [WritableValue]
-        private string userId;
-        
-        [DataMember]
-        [RequiredProperty("The USPS Module Requires setting a User ID.")]
-        [PropertyClassification(new string[] { "USPS Integration" }, "UserId", 1)]
-        public string UserId
-        {
-            get => userId;
-            set
-            {
-                userId = value;
-                OnPropertyChanged(nameof(UserId));
-            }
-        }
-
-        public override BaseActionType[] GetActions(AbstractUserContext userContext, EntityActionType[] types)
-        {
-            Account userAccount = userContext.GetAccount();
-
-            FolderPermission permission = FolderService.Instance.GetAccountEffectivePermission(
-                new SystemUserContext(), this.EntityFolderID, userAccount.AccountID);
-
-            bool canAdministrate = FolderPermission.CanAdministrate == (FolderPermission.CanAdministrate & permission) ||
-                                    userAccount.GetUserRights<PortalAdministratorModuleRight>() != null ||
-                                    userAccount.IsAdministrator();
-
-            if (canAdministrate)
-            {
-                return new BaseActionType[]
-                    {
-                        new EditEntityAction(typeof(USPSSettings), "Edit", "Edits the Portal Settings object")
-                        {
-                            MinEditorHeight = 400,
-                            MinEditorWidth = 400,
-                            IsDefaultGridAction = true
-                        }
-                    };
-            }
-            else return new BaseActionType[0];
-        }
-
-        public void Initialize()
-        {
-            // this will create it
-            ModuleSettingsAccessor<USPSSettings>.GetSettings();
-        }
-        
-        private void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            userId = value;
+            OnPropertyChanged(nameof(UserId));
         }
     }
+
+    public override BaseActionType[] GetActions(AbstractUserContext userContext, EntityActionType[] types)
+    {
+        Account userAccount = userContext.GetAccount();
+
+        FolderPermission permission = FolderService.Instance.GetAccountEffectivePermission(
+            new SystemUserContext(), this.EntityFolderID, userAccount.AccountID);
+
+        bool canAdministrate = FolderPermission.CanAdministrate == (FolderPermission.CanAdministrate & permission) ||
+                                userAccount.GetUserRights<PortalAdministratorModuleRight>() != null ||
+                                userAccount.IsAdministrator();
+
+        if (!canAdministrate) return [];
+        
+        return
+        [
+            new EditEntityAction(typeof(USPSSettings), "Edit", "Edits the Portal Settings object")
+                {
+                    MinEditorHeight = 400,
+                    MinEditorWidth = 400,
+                    IsDefaultGridAction = true
+                }
+        ];
+    }
+
+    public void Initialize()
+    {
+        ModuleSettingsAccessor<USPSSettings>.GetSettings();
+    }
+    
+    #region OnPropertyChanged
+    public event PropertyChangedEventHandler PropertyChanged;
+    private void OnPropertyChanged(string propertyName)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+    #endregion
 }
