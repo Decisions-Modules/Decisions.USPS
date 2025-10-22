@@ -16,8 +16,8 @@ public static class UpdatedUspsSteps
     {
         OAuthToken token = GetTokenById(tokenId);
         HttpClient httpClient = HttpClients.GetHttpClient(HttpClientAuthType.Normal);
-        httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.TokenData);
         AddressesClient client = new AddressesClient(httpClient);
+        client.SetAuthorizationToken(token.TokenData);
         
         try
         {
@@ -43,8 +43,8 @@ public static class UpdatedUspsSteps
     {
         OAuthToken token = GetTokenById(tokenId);
         HttpClient httpClient = HttpClients.GetHttpClient(HttpClientAuthType.Normal);
-        httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.TokenData);
         AddressesClient client = new AddressesClient(httpClient);
+        client.SetAuthorizationToken(token.TokenData);
         
         try
         {
@@ -78,8 +78,8 @@ public static class UpdatedUspsSteps
     {
         OAuthToken token = GetTokenById(tokenId);
         HttpClient httpClient = HttpClients.GetHttpClient(HttpClientAuthType.Normal);
-        httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.TokenData);
         AddressesClient client = new AddressesClient(httpClient);
+        client.SetAuthorizationToken(token.TokenData);
         
         try
         {

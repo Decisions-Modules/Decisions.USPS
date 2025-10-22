@@ -1,6 +1,8 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Net.Http;
+using System.Text;
 
 namespace Decisions.USPS.Clients
 {
@@ -46,10 +48,20 @@ namespace Decisions.USPS.Clients
     }
 
     /// <summary>
-    /// Partial class to customize JSON serialization settings
+    /// Partial class to customize JSON serialization settings and request preparation
     /// </summary>
     public partial class AddressesClient
     {
+        private string _authorizationToken;
+
+        /// <summary>
+        /// Sets the authorization token to be used for requests
+        /// </summary>
+        public void SetAuthorizationToken(string token)
+        {
+            _authorizationToken = token;
+        }
+
         static partial void UpdateJsonSerializerSettings(JsonSerializerSettings settings)
         {
             // Add our custom converter for the Source type
@@ -62,6 +74,24 @@ namespace Decisions.USPS.Clients
                 System.Diagnostics.Debug.WriteLine($"JSON Deserialization Error: {args.ErrorContext.Error.Message}");
                 args.ErrorContext.Handled = true;
             };
+        }
+
+        partial void PrepareRequest(HttpClient client, HttpRequestMessage request, string url)
+        {
+            // Set authorization header on individual request if token is available
+            if (!string.IsNullOrEmpty(_authorizationToken))
+            {
+                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _authorizationToken);
+            }
+        }
+
+        partial void PrepareRequest(HttpClient client, HttpRequestMessage request, StringBuilder urlBuilder)
+        {
+            // Set authorization header on individual request if token is available
+            if (!string.IsNullOrEmpty(_authorizationToken))
+            {
+                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _authorizationToken);
+            }
         }
     }
 }
