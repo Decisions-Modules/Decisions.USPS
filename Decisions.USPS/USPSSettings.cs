@@ -40,6 +40,30 @@ public class USPSSettings : AbstractModuleSettings, IInitializable, INotifyPrope
         }
     }
 
+    public override BaseActionType[] GetActions(AbstractUserContext userContext, EntityActionType[] types)
+    {
+        Account userAccount = userContext.GetAccount();
+
+        FolderPermission permission = FolderService.Instance.GetAccountEffectivePermission(
+            new SystemUserContext(), this.EntityFolderID, userAccount.AccountID);
+
+        bool canAdministrate = FolderPermission.CanAdministrate == (FolderPermission.CanAdministrate & permission) ||
+                                userAccount.GetUserRights<PortalAdministratorModuleRight>() != null ||
+                                userAccount.IsAdministrator();
+
+        if (!canAdministrate) return [];
+        
+        return
+        [
+            new EditEntityAction(typeof(USPSSettings), "Edit", "Edits the Portal Settings object")
+                {
+                    MinEditorHeight = 400,
+                    MinEditorWidth = 400,
+                    IsDefaultGridAction = true
+                }
+        ];
+    }
+
     public void Initialize()
     {
         ModuleSettingsAccessor<USPSSettings>.GetSettings();
